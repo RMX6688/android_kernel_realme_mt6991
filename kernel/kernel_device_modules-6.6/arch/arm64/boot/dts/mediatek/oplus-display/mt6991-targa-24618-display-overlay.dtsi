@@ -1,0 +1,108 @@
+#include "mt6991-dsi-display-conf.h"
+#include "panel-ae031-p-3-a0026-dsi-vdo-ext-params.dtsi"
+
+&dsi0 {
+	panel_ae031_p_3_a0026_dsi_vdo: oplus,panel_ae031_p_3_a0026_dsi_vdo {};
+};
+
+#include "panel-ae031-p-3-a0026-dsi-vdo.dtsi"
+#include "panel-ae031-p-3-a0026-dsi-vdo-dvt1.dtsi"
+#include "panel-ae031-p-3-a0026-dsi-vdo-dvt2.dtsi"
+
+&mtk_leds {
+	status = "okay";
+
+	backlight {
+		label = "lcd-backlight";
+		led_mode = <4>;
+		min-brightness = <1>;
+		max-brightness = <4094>;
+		min-hw-brightness = <1>;
+		max-hw-brightness = <4094>;
+		oplus-brightness-default-percent = <35>;
+		oplus-brightness-normal-max = <3598>;
+		led-bits = <13>;
+		trans-bits = <13>;
+		default-state = "on";
+	};
+};
+
+&dsi0 {
+	status = "okay";
+	#address-cells = <1>;
+	#size-cells = <0>;
+	panel6@5 {
+		compatible = "oplus_display_dsi_primary";
+		reg = <1>;
+		vddio-supply = <&mt6373_vcn18io>;
+		vci-supply = <&mt6373_vmc>;
+		pinctrl-names = "default";
+		port {
+			oplus_panel_in6: endpoint {
+				remote-endpoint = <&oplus_dsi_out6>;
+			};
+		};
+	};
+	ports {
+		port {
+			oplus_dsi_out6: endpoint@5 {
+				remote-endpoint = <&oplus_panel_in6>;
+			};
+		};
+	};
+};
+
+&dsi0 {
+	dsi_panel_pwr_supply: oplus,dsi_panel_pwr_supply {
+		oplus,panel-supply-entry@0 {
+			reg = <0>;
+			oplus,supply-name = "vddio";
+			oplus,supply-type = <OPLUS_SUPPLY_TYPE_LDO>;
+			oplus,supply-min-voltage = <1800000>;
+			oplus,supply-max-voltage = <1800000>;
+		};
+		oplus,panel-supply-entry@1 {
+			reg = <1>;
+			oplus,supply-name = "vddr";
+			oplus,supply-type = <OPLUS_SUPPLY_TYPE_GPIO>;
+			oplus,supply-gpios = <&pio 175 0>;
+		};
+		oplus,panel-supply-entry@2 {
+			reg = <2>;
+			oplus,supply-name = "vci";
+			oplus,supply-type = <OPLUS_SUPPLY_TYPE_LDO>;
+			oplus,supply-min-voltage = <3000000>;
+			oplus,supply-max-voltage = <3000000>;
+		};
+	};
+};
+
+&pio {
+	mtkfb_pins_lcm_dsi_te1: lcm-dsi-te1 {
+		pins-cmd-dat {
+			pinmux = <PINMUX_GPIO103__FUNC_DSI1_TE>;
+		};
+	};
+};
+
+&dispsys_config {
+	pinctrl-names = "mode_te_te";
+	pinctrl-0 = <&mtkfb_pins_lcm_dsi_te &mtkfb_pins_lcm_dsi_te1>;
+	status = "okay";
+};
+
+&disp_aal0 {
+	doze-bypass = <0x10000>;
+};
+
+&disp_aal1 {
+	doze-bypass = <0x10000>;
+};
+
+&disp_mdp_aal0 {
+	doze-bypass = <0>;
+};
+
+&disp_mdp_aal1 {
+        doze-bypass = <0>;
+};
